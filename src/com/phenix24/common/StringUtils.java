@@ -30,6 +30,7 @@ public class StringUtils {
             String strTemp = hexStr.substring(i, i + 2);
             bytes[i / 2] = (byte) Integer.parseInt(strTemp, 16);
         }
+
         return bytes;
     }
 }
