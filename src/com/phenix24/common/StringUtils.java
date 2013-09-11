@@ -18,4 +18,18 @@ public class StringUtils {
         }
         return sb.toString().toUpperCase();
     }
+
+    public static byte[] hexStrToBytes(String hexStr) {
+
+        if (hexStr == null || hexStr.length() == 0 || hexStr.length() % 2 != 0)
+            return null;
+
+        int len = hexStr.length();
+        byte[] bytes = new byte[len / 2];
+        for (int i = 0; i < len - 1; i += 2) {
+            String strTemp = hexStr.substring(i, i + 2);
+            bytes[i / 2] = (byte) Integer.parseInt(strTemp, 16);
+        }
+        return bytes;
+    }
 }
