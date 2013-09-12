@@ -3,7 +3,6 @@ package com.phenix24.common;
 public class StringUtils {
 
     public static String bytesToHexStr(byte[] bytes) {
-
         if (bytes == null || bytes.length == 0)
             return null;
 
@@ -20,7 +19,6 @@ public class StringUtils {
     }
 
     public static byte[] hexStrToBytes(String hexStr) {
-
         if (hexStr == null || hexStr.length() == 0 || hexStr.length() % 2 != 0)
             return null;
 
@@ -30,7 +28,6 @@ public class StringUtils {
             String strTemp = hexStr.substring(i, i + 2);
             bytes[i / 2] = (byte) Integer.parseInt(strTemp, 16);
         }
-
         return bytes;
     }
 }
