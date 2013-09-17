@@ -1,4 +1,4 @@
-package com.phenix24.util;
+package com.phenix24.util.android;
 
 import android.util.Log;
 
