@@ -2,6 +2,7 @@ package com.phenix24.util.droid;
 
 import android.content.Context;
 import android.test.InstrumentationTestCase;
+import android.text.format.Formatter;
 import android.util.Log;
 
 public class StorageUtilsTest extends InstrumentationTestCase {
@@ -70,5 +71,37 @@ public class StorageUtilsTest extends InstrumentationTestCase {
         Log.d(TAG, "----test_getExternalDroidDir----");
         String dir = StorageUtils.getExternalDroidDir(context, "test_dir");
         Log.d(TAG, "dir:" + dir);
+    }
+
+    public void test_getInternalTotalSize() {
+        Log.d(TAG, "----test_getInternalTotalSize----");
+        long internalTotalSize = StorageUtils.getInternalTotalSize();
+        Log.d(TAG,
+                "internalTotalSize:"
+                        + Formatter.formatFileSize(context, internalTotalSize));
+    }
+
+    public void test_getInternalAvailableSize() {
+        Log.d(TAG, "----test_getInternalAvailableSize----");
+        long internalAvailableSize = StorageUtils.getInternalAvailableSize();
+        Log.d(TAG,
+                "internalAvailableSize:"
+                        + Formatter.formatFileSize(context, internalAvailableSize));
+    }
+
+    public void test_getExternalTotalSize() {
+        Log.d(TAG, "----test_getExternalTotalSize----");
+        long externalTotalSize = StorageUtils.getExternalTotalSize();
+        Log.d(TAG,
+                "externalTotalSize:"
+                        + Formatter.formatFileSize(context, externalTotalSize));
+    }
+
+    public void test_getExternalAvailableSize() {
+        Log.d(TAG, "----test_getExternalAvailableSize----");
+        long externalAvailableSize = StorageUtils.getExternalAvailableSize();
+        Log.d(TAG,
+                "externalAvailableSize:"
+                        + Formatter.formatFileSize(context, externalAvailableSize));
     }
 }
