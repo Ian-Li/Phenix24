@@ -4,6 +4,7 @@ import java.io.File;
 
 import android.content.Context;
 import android.os.Environment;
+import android.os.StatFs;
 
 public class StorageUtils {
 
@@ -57,5 +58,39 @@ public class StorageUtils {
             return null;
         File externalDroidDir = context.getExternalFilesDir(dir);
         return externalDroidDir.getAbsolutePath();
+    }
+
+    public static long getInternalTotalSize() {
+        File dataDir = Environment.getDataDirectory();
+        StatFs statFs = new StatFs(dataDir.getAbsolutePath());
+        long blockSize = statFs.getBlockSize();
+        long blockCount = statFs.getBlockCount();
+        return blockSize * blockCount;
+    }
+
+    public static long getInternalAvailableSize() {
+        File dataDir = Environment.getDataDirectory();
+        StatFs statFs = new StatFs(dataDir.getAbsolutePath());
+        long blockSize = statFs.getBlockSize();
+        long availableBlocks = statFs.getAvailableBlocks();
+        return blockSize * availableBlocks;
+    }
+
+    public static long getExternalTotalSize() {
+        if (!isExternalAvailable())
+            return 0;
+        StatFs statFs = new StatFs(getExternalDir());
+        long blockSize = statFs.getBlockSize();
+        long blockCount = statFs.getBlockCount();
+        return blockSize * blockCount;
+    }
+
+    public static long getExternalAvailableSize() {
+        if (!isExternalAvailable())
+            return 0;
+        StatFs statFs = new StatFs(getExternalDir());
+        long blockSize = statFs.getBlockSize();
+        long availableBlocks = statFs.getAvailableBlocks();
+        return blockSize * availableBlocks;
     }
 }
