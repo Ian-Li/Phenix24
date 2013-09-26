@@ -14,7 +14,7 @@ public class StorageUtilsTest extends InstrumentationTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        context = getInstrumentation().getContext();
+        context = getInstrumentation().getTargetContext();
     }
 
     public void test_getInternalCacheDir() {
