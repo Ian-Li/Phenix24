@@ -11,6 +11,7 @@ public class PackageUtils {
     public static void installAPK(Context context, String path) {
         Uri uri = Uri.fromFile(new File(path));
         Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.setDataAndType(uri, "application/vnd.android.package-archive");
         context.startActivity(intent);
     }
@@ -18,6 +19,7 @@ public class PackageUtils {
     public static void uninstallAPK(Context context, String pkgName) {
         Uri uri = Uri.parse("package:" + pkgName);
         Intent intent = new Intent(Intent.ACTION_DELETE, uri);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
     }
 }
