@@ -17,26 +17,26 @@ public class DisplayUtilsTest extends InstrumentationTestCase {
     }
 
     public void test_getWidth() {
-        Log.d(TAG, "----test_getWidth----");
+        Log.i(TAG, "----test_getWidth----");
         int width = DisplayUtils.getWidth(context);
-        Log.d(TAG, "width:" + width);
+        Log.i(TAG, "width:" + width);
     }
 
     public void test_getHeight() {
-        Log.d(TAG, "----test_getHeight----");
+        Log.i(TAG, "----test_getHeight----");
         int height = DisplayUtils.getHeight(context);
-        Log.d(TAG, "height:" + height);
+        Log.i(TAG, "height:" + height);
     }
 
     public void test_getDensity() {
-        Log.d(TAG, "----test_getDensity----");
+        Log.i(TAG, "----test_getDensity----");
         float density = DisplayUtils.getDensity(context);
-        Log.d(TAG, "density:" + density);
+        Log.i(TAG, "density:" + density);
     }
 
     public void test_getDensityDPI() {
-        Log.d(TAG, "----test_getDensityDPI----");
+        Log.i(TAG, "----test_getDensityDPI----");
         int densityDPI = DisplayUtils.getDensityDPI(context);
-        Log.d(TAG, "densityDPI:" + densityDPI);
+        Log.i(TAG, "densityDPI:" + densityDPI);
     }
 }

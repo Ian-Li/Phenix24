@@ -4,6 +4,9 @@ import java.io.File;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.Uri;
 
 public class PackageUtils {
@@ -22,4 +25,19 @@ public class PackageUtils {
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
     }
+
+    public static int getAppVersionCode(Context context, String pkaName)
+            throws NameNotFoundException {
+        PackageManager pkgManager = context.getPackageManager();
+        PackageInfo pkgInfo = pkgManager.getPackageInfo(pkaName, 0);
+        return pkgInfo.versionCode;
+    }
+
+    public static String getAppVersionName(Context context, String pkaName)
+            throws NameNotFoundException {
+        PackageManager pkgManager = context.getPackageManager();
+        PackageInfo pkgInfo = pkgManager.getPackageInfo(pkaName, 0);
+        return pkgInfo.versionName;
+    }
+
 }
