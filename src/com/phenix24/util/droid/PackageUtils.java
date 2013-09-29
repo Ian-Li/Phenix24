@@ -11,6 +11,13 @@ import android.net.Uri;
 
 public class PackageUtils {
 
+    /**
+     * Install android package
+     * 
+     * @param context
+     * @param path
+     *            ".apk" file path
+     */
     public static void installAPK(Context context, String path) {
         Uri uri = Uri.fromFile(new File(path));
         Intent intent = new Intent(Intent.ACTION_VIEW);
@@ -19,6 +26,14 @@ public class PackageUtils {
         context.startActivity(intent);
     }
 
+    /**
+     * Uninstall android package
+     * 
+     * @param context
+     * @param pkgName
+     *            package name,e.g"com.phenix24"
+     * 
+     */
     public static void uninstallAPK(Context context, String pkgName) {
         Uri uri = Uri.parse("package:" + pkgName);
         Intent intent = new Intent(Intent.ACTION_DELETE, uri);
@@ -26,6 +41,17 @@ public class PackageUtils {
         context.startActivity(intent);
     }
 
+    /**
+     * Get android app's version code,the version code defined
+     * AndroidManifest.xml
+     * 
+     * @param context
+     * @param pkaName
+     *            android package name
+     * @return version code
+     * @throws NameNotFoundException
+     *             if app not installed
+     */
     public static int getAppVersionCode(Context context, String pkaName)
             throws NameNotFoundException {
         PackageManager pkgManager = context.getPackageManager();
@@ -33,6 +59,17 @@ public class PackageUtils {
         return pkgInfo.versionCode;
     }
 
+    /**
+     * Get android app's version name,the version name defined
+     * AndroidManifest.xml.
+     * 
+     * @param context
+     * @param pkaName
+     *            android package name
+     * @return version name
+     * @throws NameNotFoundException
+     *             if app not installed
+     */
     public static String getAppVersionName(Context context, String pkaName)
             throws NameNotFoundException {
         PackageManager pkgManager = context.getPackageManager();
