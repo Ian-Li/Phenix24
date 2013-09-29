@@ -2,6 +2,12 @@ package com.phenix24.util;
 
 public class StringUtils {
 
+    /**
+     * A array of bytes convert to hex string.
+     * 
+     * @param bytes
+     * @return hex string.if parameter bytes is empty,return NULL.
+     */
     public static String bytesToHexStr(byte[] bytes) {
         if (bytes == null || bytes.length == 0)
             return null;
@@ -18,6 +24,13 @@ public class StringUtils {
         return sb.toString().toUpperCase();
     }
 
+    /**
+     * A hex string convert to byte array.
+     * 
+     * @param hexStr
+     * @return byte array.if parameter hexStr is empty or hexStr.length() % 2 !=
+     *         0,return NULL.
+     */
     public static byte[] hexStrToBytes(String hexStr) {
         if (hexStr == null || hexStr.length() == 0 || hexStr.length() % 2 != 0)
             return null;
