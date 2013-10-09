@@ -46,4 +46,10 @@ public class PackageUtilsTest extends InstrumentationTestCase {
             Log.i(TAG, "NameNotFoundException");
         }
     }
+
+    public void test_isPackageExist() {
+        Log.i(TAG, "----test_isPackageExist----");
+        boolean isPackageExist = PackageUtils.isPackageExist(context, "com.t");
+        Log.i(TAG, "isPackageExist:" + isPackageExist);
+    }
 }
