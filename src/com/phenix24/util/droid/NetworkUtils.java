@@ -3,6 +3,8 @@ package com.phenix24.util.droid;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 
 public class NetworkUtils {
 
@@ -38,5 +40,18 @@ public class NetworkUtils {
             networkState = NetworkState.UNKNOW;
 
         return networkState;
+    }
+
+    /**
+     * Get Wi-Fi MAC Address.
+     * 
+     * @param context
+     * @return MAC Address
+     */
+    public static String getWifiMacAddress(Context context) {
+        WifiManager wifiMgr = (WifiManager) context
+                .getSystemService(Context.WIFI_SERVICE);
+        WifiInfo wifiInfo = wifiMgr.getConnectionInfo();
+        return wifiInfo.getMacAddress();
     }
 }

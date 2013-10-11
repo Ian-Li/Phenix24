@@ -24,4 +24,9 @@ public class NetworkUtilsTest extends InstrumentationTestCase {
         Log.d(TAG, "networkState:" + networkState);
     }
 
+    public void test_getWifiMacAddress() {
+        Log.i(TAG, "----test_getWifiMacAddress----");
+        String wifiMacAddress = NetworkUtils.getWifiMacAddress(context);
+        Log.d(TAG, "wifiMacAddress:" + wifiMacAddress);
+    }
 }
