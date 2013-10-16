@@ -33,4 +33,17 @@ public class BuildUtils {
         return Build.SERIAL;
     }
 
+    /**
+     * @return The user-visible android version string.
+     */
+    public static String getVersionRelease() {
+        return Build.VERSION.RELEASE;
+    }
+
+    /**
+     * @return The user-visible SDK version of the framework.
+     */
+    public static int getVersionSDK() {
+        return Build.VERSION.SDK_INT;
+    }
 }
