@@ -3,6 +3,30 @@ package com.phenix24.util;
 public class StringUtils {
 
     /**
+     * Check whether a string is HEX string.
+     * 
+     * @param hexStr
+     * @return true HEX string,otherwise false.
+     */
+    public static boolean isHexStr(String hexStr) {
+        if (hexStr == null || hexStr.length() == 0 || hexStr.length() % 2 != 0)
+            return false;
+
+        hexStr = hexStr.toUpperCase();
+        int len = hexStr.length();
+        for (int i = 0; i < len; i++) {
+            int c = (int) hexStr.charAt(i);
+            // ASCII 0~9,A~F
+            if ((c >= 48 && c <= 57) || (c >= 65 && c <= 70)) {
+                continue;
+            } else {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * A array of bytes convert to hex string.
      * 
      * @param bytes
@@ -28,11 +52,10 @@ public class StringUtils {
      * A hex string convert to byte array.
      * 
      * @param hexStr
-     * @return byte array.if parameter hexStr is empty or hexStr.length() % 2 !=
-     *         0,return NULL.
+     * @return byte array.if parameter hexStr is illegality,return NULL.
      */
     public static byte[] hexStrToBytes(String hexStr) {
-        if (hexStr == null || hexStr.length() == 0 || hexStr.length() % 2 != 0)
+        if (!isHexStr(hexStr))
             return null;
 
         int len = hexStr.length();
@@ -43,4 +66,5 @@ public class StringUtils {
         }
         return bytes;
     }
+
 }
