@@ -7,6 +7,13 @@ public class StringUtilsTest extends InstrumentationTestCase {
 
     private static final String TAG = "StringUtilsTest";
 
+    public void test_isHexStr() {
+        Log.i(TAG, "----test_isHexStr----");
+        String hexStr = "09afbg";
+        boolean isHexStr = StringUtils.isHexStr(hexStr);
+        Log.i(TAG, "isHexStr:" + isHexStr);
+    }
+
     public void test_bytesToHexStr() {
         Log.i(TAG, "----test_bytesToHexStr----");
         byte[] bytes = new byte[] { (byte) 0x01, (byte) 0xAF };
