@@ -13,10 +13,6 @@ public class BinaryHttpHandler extends DefaultHttpHandler {
         super(context);
     }
 
-    public BinaryHttpHandler(Context context, boolean isPool) {
-        super(context, isPool);
-    }
-
     public byte[] GET(String url) throws HttpException, IOException {
         return GET(url, null);
     }
@@ -51,5 +47,5 @@ public class BinaryHttpHandler extends DefaultHttpHandler {
         // TODO
         return new byte[10];
     }
-    
+
 }

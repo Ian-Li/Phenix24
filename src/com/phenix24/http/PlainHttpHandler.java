@@ -7,14 +7,10 @@ import org.apache.http.HttpResponse;
 
 import android.content.Context;
 
-public class TextHttpHandler extends DefaultHttpHandler {
+public class PlainHttpHandler extends DefaultHttpHandler {
 
-    public TextHttpHandler(Context context) {
+    public PlainHttpHandler(Context context) {
         super(context);
-    }
-
-    public TextHttpHandler(Context context, boolean isPool) {
-        super(context, isPool);
     }
 
     public String GET(String url) throws HttpException, IOException {
