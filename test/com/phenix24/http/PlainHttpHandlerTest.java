@@ -6,9 +6,9 @@ import android.content.Context;
 import android.test.InstrumentationTestCase;
 import android.util.Log;
 
-public class TextHttpHandlerTest extends InstrumentationTestCase {
+public class PlainHttpHandlerTest extends InstrumentationTestCase {
 
-    private static final String TAG = "TextHttpHandlerTest";
+    private static final String TAG = "PlainHttpHandlerTest";
 
     private Context context;
 
@@ -21,14 +21,16 @@ public class TextHttpHandlerTest extends InstrumentationTestCase {
     public void test_GET() {
         Log.i(TAG, "----test_GET----");
 
-        TextHttpHandler textHttpHandler = new TextHttpHandler(context);
+        PlainHttpHandler httpHandler = new PlainHttpHandler(context);
         String response = null;
         try {
-            response = textHttpHandler.GET("http://www.baidu.com");
+            response = httpHandler.GET("http://www.baidu.com");
         } catch (HttpException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            httpHandler.shutdown();
         }
 
         Log.i(TAG, "response:" + response);
