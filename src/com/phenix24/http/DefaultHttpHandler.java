@@ -32,7 +32,6 @@ import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.entity.BufferedHttpEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.conn.SingleClientConnManager;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicNameValuePair;
@@ -62,47 +61,29 @@ public class DefaultHttpHandler {
     static final int DEFAULT_BUFFER_SZIE = 1024 * 8;
 
     static final int DEFAULT_CONN_MANAGER_TIMEOUT = DEFAULT_CONN_TIMEOUT;
-    static final int DEFAULT_MAX_CONNECTIONS = 1;
-    static final int DEFAULT_PER_ROUTE = 1;
+    static final int DEFAULT_MAX_CONNECTIONS = 8;
+    static final int DEFAULT_PER_ROUTE_CONNECTIONS = DEFAULT_MAX_CONNECTIONS;
 
     private Context context;
-    private boolean isPool;
     private HttpClient httpClient;
 
     /**
-     * Construct default httphandler instance,only support single connection.
+     * Construct <code>DefaultHttpHandler</code> instance.
      * 
      * @param context
      */
     public DefaultHttpHandler(Context context) {
         this.context = context;
-        this.isPool = false;
-        this.httpClient = makeHttpClient(isPool);
-    }
-
-    /**
-     * Construct httphandler,support ThreadSefe's HTTP connection pool.
-     * 
-     * @param context
-     * @param isPool
-     *            false only support single connection,ture support http
-     *            connection pool.
-     */
-    public DefaultHttpHandler(Context context, boolean isPool) {
-        this.context = context;
-        this.isPool = isPool;
-        this.httpClient = makeHttpClient(isPool);
+        this.httpClient = makeHttpClient();
     }
 
     /**
      * Create and Initialize HttpClient.Set HttpClient request retry policy.The
      * HttpClient is thread safe and present a connection pool.
      * 
-     * @param isPool
-     *            whether HttpClient contain connect pool.
      * @return HttpClient
      */
-    protected HttpClient makeHttpClient(boolean isPool) {
+    protected HttpClient makeHttpClient() {
         HttpParams httpParams = new BasicHttpParams();
 
         // inital httpclient protocol parameters
@@ -131,11 +112,11 @@ public class DefaultHttpHandler {
         ConnManagerParamBean connMgrPB = new ConnManagerParamBean(httpParams);
         connMgrPB.setTimeout(DEFAULT_CONN_MANAGER_TIMEOUT);
         connMgrPB.setMaxTotalConnections(DEFAULT_MAX_CONNECTIONS);
-        connMgrPB.setConnectionsPerRoute(new ConnPerRouteBean(DEFAULT_PER_ROUTE));
+        connMgrPB.setConnectionsPerRoute(new ConnPerRouteBean(
+                DEFAULT_PER_ROUTE_CONNECTIONS));
 
-        ClientConnectionManager clientConnMgr = isPool ? new ThreadSafeClientConnManager(
-                httpParams, schemeReg) : new SingleClientConnManager(httpParams,
-                schemeReg);
+        ClientConnectionManager clientConnMgr = new ThreadSafeClientConnManager(
+                httpParams, schemeReg);
 
         DefaultHttpClient httpClient = new DefaultHttpClient(clientConnMgr, httpParams);
 
@@ -217,12 +198,10 @@ public class DefaultHttpHandler {
      *            support connections per route.
      */
     public void setConnections(int maxConnections, int connectionsPerRoute) {
-        if (isPool) {
-            HttpParams params = httpClient.getParams();
-            ConnManagerParams.setMaxTotalConnections(params, maxConnections);
-            ConnManagerParams.setMaxConnectionsPerRoute(params, new ConnPerRouteBean(
-                    connectionsPerRoute));
-        }
+        HttpParams params = httpClient.getParams();
+        ConnManagerParams.setMaxTotalConnections(params, maxConnections);
+        ConnManagerParams.setMaxConnectionsPerRoute(params, new ConnPerRouteBean(
+                connectionsPerRoute));
     }
 
     /**
@@ -262,16 +241,6 @@ public class DefaultHttpHandler {
 
         ((DefaultHttpClient) httpClient).getCredentialsProvider().setCredentials(
                 authScope, credentials);
-    }
-
-    /**
-     * Weather {@link #httpClient} is thread safe.
-     * 
-     * @return ture means httpclient has http connections pool ability;false
-     *         otherwise.
-     */
-    public boolean isPool() {
-        return isPool;
     }
 
     /**
@@ -346,8 +315,7 @@ public class DefaultHttpHandler {
             handledResponse = handleResponse(response);
 
         } finally {
-            if (!isPool)
-                httpClient.getConnectionManager().shutdown();
+            // DO NOTHING;
         }
 
         return handledResponse;
@@ -382,6 +350,15 @@ public class DefaultHttpHandler {
         }
 
         return handledResp;
+    }
+
+    /**
+     * Shuts down this HTTP connection pool and releases allocated resources.
+     * This includes closing all connections, whether they are currently used or
+     * not.
+     */
+    public void shutdown() {
+        httpClient.getConnectionManager().shutdown();
     }
 
     /**
