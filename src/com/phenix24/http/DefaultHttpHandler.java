@@ -64,6 +64,15 @@ public class DefaultHttpHandler {
     static final int DEFAULT_MAX_CONNECTIONS = 8;
     static final int DEFAULT_PER_ROUTE_CONNECTIONS = DEFAULT_MAX_CONNECTIONS;
 
+    static class RetryPolicy implements HttpRequestRetryHandler {
+
+        @Override
+        public boolean retryRequest(IOException exception, int executionCount,
+                HttpContext context) {
+            return executionCount >= 3 ? false : true;
+        }
+    }
+
     private Context context;
     private HttpClient httpClient;
 
@@ -86,7 +95,9 @@ public class DefaultHttpHandler {
     protected HttpClient makeHttpClient() {
         HttpParams httpParams = new BasicHttpParams();
 
-        // inital httpclient protocol parameters
+        //
+        // initialize protocol parameters
+        //
         HttpProtocolParamBean httpProtocolPB = new HttpProtocolParamBean(httpParams);
         httpProtocolPB.setVersion(HttpVersion.HTTP_1_1);
         httpProtocolPB.setHttpElementCharset(DEFAULT_CHARSET_UTF8);
@@ -94,7 +105,9 @@ public class DefaultHttpHandler {
         httpProtocolPB.setUserAgent(DEFAULT_USERAGENT);
         httpProtocolPB.setUseExpectContinue(false);
 
-        // inital httpclient connect parameters
+        //
+        // initialize connect parameters
+        //
         HttpConnectionParamBean httpConnPB = new HttpConnectionParamBean(httpParams);
         httpConnPB.setConnectionTimeout(DEFAULT_CONN_TIMEOUT);
         httpConnPB.setSoTimeout(DEFAULT_CONN_SOCKET_TIMEOUT);
@@ -103,12 +116,16 @@ public class DefaultHttpHandler {
         httpConnPB.setTcpNoDelay(true);
         httpConnPB.setStaleCheckingEnabled(false);
 
-        // register supported protocol for httpclient
+        //
+        // register supported protocol
+        //
         SchemeRegistry schemeReg = new SchemeRegistry();
         Scheme httpScheme = new Scheme("http", PlainSocketFactory.getSocketFactory(), 80);
         schemeReg.register(httpScheme);
 
-        // inital http connect pool manager parameters,keep single connection
+        //
+        // initialize http connect pool manager parameters
+        //
         ConnManagerParamBean connMgrPB = new ConnManagerParamBean(httpParams);
         connMgrPB.setTimeout(DEFAULT_CONN_MANAGER_TIMEOUT);
         connMgrPB.setMaxTotalConnections(DEFAULT_MAX_CONNECTIONS);
@@ -121,14 +138,7 @@ public class DefaultHttpHandler {
         DefaultHttpClient httpClient = new DefaultHttpClient(clientConnMgr, httpParams);
 
         // set httpclient retry policy when an IOException occured
-        httpClient.setHttpRequestRetryHandler(new HttpRequestRetryHandler() {
-
-            @Override
-            public boolean retryRequest(IOException exception, int executionCount,
-                    HttpContext context) {
-                return executionCount >= 3 ? false : true;
-            }
-        });
+        httpClient.setHttpRequestRetryHandler(new RetryPolicy());
 
         return httpClient;
     }
@@ -155,7 +165,7 @@ public class DefaultHttpHandler {
     }
 
     /**
-     * Set httpclient connect timeout and response timeout.
+     * Set client connect timeout and response timeout.
      * 
      * @param connectTimeout
      *            in milliseconds.
@@ -179,23 +189,22 @@ public class DefaultHttpHandler {
     }
 
     /**
-     * Set timeout for obtaining usable connection form connect pool.
+     * Set timeout for obtaining usable connection from connect pool.
      * 
      * @param timeout
-     *            in milliseconds
+     *            in milliseconds.
      */
     public void setConnManagerTimeout(int timeout) {
         ConnManagerParams.setTimeout(httpClient.getParams(), timeout);
     }
 
     /**
-     * Set httpclient connect pool carrying ability.Only effect
-     * {@link #isPool()} return true.
+     * Set httpclient connect pool carrying ability.
      * 
      * @param maxConnections
-     *            support max connections.
+     *            supported max connections.
      * @param connectionsPerRoute
-     *            support connections per route.
+     *            supported connections per route.
      */
     public void setConnections(int maxConnections, int connectionsPerRoute) {
         HttpParams params = httpClient.getParams();
@@ -205,10 +214,10 @@ public class DefaultHttpHandler {
     }
 
     /**
-     * Set httpclient retry policy when an error occured.
+     * Set client retry policy when an IOException occured.
      * 
      * @param retryHandler
-     *            HttpRequestRetryHandler
+     *            HttpRequestRetryHandler.
      */
     public void setHttpRequestRetryHandler(HttpRequestRetryHandler retryHandler) {
         ((DefaultHttpClient) httpClient).setHttpRequestRetryHandler(retryHandler);
@@ -218,20 +227,20 @@ public class DefaultHttpHandler {
      * Set http authentication,support http basic,digest auth.
      * 
      * @param username
-     *            auth user.
+     *            Auth user.
      * @param password
-     *            auth user password.
+     *            Auth user password.
      * @param host
-     *            auth host,May be set to null if credenticals are applicable to
+     *            Auth host,May be set to null if credenticals are applicable to
      *            any host.
      * @param port
-     *            auth host port,May be set to negative value if credenticals
+     *            Auth host port,May be set to negative value if credenticals
      *            are applicable to any port.
      * @param realm
-     *            auth realm,May be set to null if credenticals are applicable
+     *            Auth realm,May be set to null if credenticals are applicable
      *            to any realm.
      * @param authScheme
-     *            auth type,e.g"basic","digest".
+     *            Auth type,e.g."basic","digest".
      */
     public void setHttpAuth(String username, String password, String host, int port,
             String realm, String authScheme) {
@@ -244,7 +253,7 @@ public class DefaultHttpHandler {
     }
 
     /**
-     * Get constructed HttpClient which hold by DefaultHttpHandler.
+     * Get constructed HttpClient which held by DefaultHttpHandler.
      * 
      * @return {@link #httpClient}
      */
@@ -253,13 +262,14 @@ public class DefaultHttpHandler {
     }
 
     /**
-     * Send http request and receive response.
+     * Send http request and handle response.
      * 
      * @param httpClient
      * @param httpRequest
-     *            http method,e.g"HTTPGet","HTTPPost","HTTPPut" etc.
+     *            Http method,e.g."HttpGet","HttpPost","HttpPut","HttpDelete"
+     *            etc.
      * @param contentType
-     *            http header-"Content-type".
+     *            Http header-"Content-type".
      * @return handled response
      * @throws HttpException
      * @throws IOException
@@ -313,7 +323,6 @@ public class DefaultHttpHandler {
             }
 
             handledResponse = handleResponse(response);
-
         } finally {
             // DO NOTHING;
         }
@@ -326,7 +335,7 @@ public class DefaultHttpHandler {
      * 
      * @param response
      *            <code>HttpResponse</code>
-     * @return handled response
+     * @return Handled response
      * @throws HttpException
      * @throws IOException
      */
@@ -353,20 +362,18 @@ public class DefaultHttpHandler {
     }
 
     /**
-     * Shuts down this HTTP connection pool and releases allocated resources.
-     * This includes closing all connections, whether they are currently used or
-     * not.
+     * Shutdown this http connection pool and releases allocated resources. This
+     * includes closing all connections, whether they are currently used or not.
      */
     public void shutdown() {
         httpClient.getConnectionManager().shutdown();
     }
 
     /**
-     * Convert to http query parameters that httpclient supported key-value
-     * list.
+     * Convert http query parameters.
      * 
      * @param params
-     *            contain key-value.
+     *            Http query parameters,key-value list.
      * @return httpclient supported key-value list.
      */
     public List<BasicNameValuePair> toHttpQueryParams(Map<String, String> params) {
@@ -378,11 +385,11 @@ public class DefaultHttpHandler {
     }
 
     /**
-     * Convert to http <code>Header</code> array.
+     * Convert http headers.
      * 
      * @param headers
-     *            http <code>Header</code>
-     * @return a array contain http <code>Header</code>.
+     *            Http headers,key-value list.
+     * @return a array contain http headers.
      */
     public Header[] toHttpHeaders(Map<String, String> headers) {
         List<Header> lHeaders = new ArrayList<Header>();
@@ -394,15 +401,15 @@ public class DefaultHttpHandler {
     }
 
     /**
-     * Http GET Method.
+     * Http GET method.
      * 
      * @param url
-     *            start with "http://" or "https://".
+     *            Start with "http://" or "https://".
      * @param params
      *            Http query aguments,can be NULL.
      * @param headers
      *            Http headers,can be NULL.
-     * @return handled response
+     * @return Handled response
      * 
      * @throws HttpException
      * @throws IOException
@@ -412,7 +419,6 @@ public class DefaultHttpHandler {
         if (params != null) {
             String paramsStr = URLEncodedUtils.format(toHttpQueryParams(params),
                     DEFAULT_CHARSET_UTF8);
-
             url = "" + url;
             url += ((url.indexOf("?") == -1) ? "?" : "&") + paramsStr;
         }
@@ -426,15 +432,15 @@ public class DefaultHttpHandler {
     }
 
     /**
-     * Http POST Method.
+     * Http POST method.
      * 
      * @param url
-     *            start with "http://" or "https://".
+     *            Start with "http://" or "https://".
      * @param params
      *            Http post aguments,can be NULL.
      * @param headers
-     *            http headers,can be NULL.
-     * @return handled response
+     *            Http headers,can be NULL.
+     * @return Handled response
      * 
      * @throws HttpException
      * @throws IOException

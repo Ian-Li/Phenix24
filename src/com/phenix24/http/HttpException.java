@@ -10,7 +10,7 @@ public class HttpException extends Exception {
     private static final long serialVersionUID = 1L;
 
     //
-    // Exception type
+    // exception category
     //
     public static final int UNKNOWN = 0;
     public static final int NETWORK_UNAVAILABLE = 1;

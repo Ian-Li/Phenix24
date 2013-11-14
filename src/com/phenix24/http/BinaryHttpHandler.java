@@ -27,25 +27,11 @@ public class BinaryHttpHandler extends DefaultHttpHandler {
         return (byte[]) _get(url, params, headers);
     }
 
-    public byte[] POST(String url) throws HttpException, IOException {
-        return POST(url, null);
-    }
-
-    public byte[] POST(String url, Map<String, String> params) throws HttpException,
-            IOException {
-        return POST(url, params, null);
-    }
-
-    public byte[] POST(String url, Map<String, String> params, Map<String, String> headers)
-            throws HttpException, IOException {
-        return (byte[]) _post(url, params, headers);
-    }
-
     @Override
     protected byte[] handleResponse(HttpResponse response) throws HttpException,
             IOException {
         // TODO
-        return new byte[10];
+        return new byte[0];
     }
 
 }
