@@ -75,8 +75,8 @@ public class DefaultHttpHandler {
         }
     }
 
-    private Context context;
-    private HttpClient httpClient;
+    protected Context context;
+    protected HttpClient httpClient;
 
     /**
      * Construct <code>DefaultHttpHandler</code> instance.
@@ -119,14 +119,14 @@ public class DefaultHttpHandler {
         httpConnPB.setStaleCheckingEnabled(false);
 
         //
-        // Register supported protocol.
+        // Register default protocol scheme.
         //
         SchemeRegistry schemeReg = new SchemeRegistry();
         Scheme httpScheme = new Scheme("http", PlainSocketFactory.getSocketFactory(), 80);
         schemeReg.register(httpScheme);
 
         //
-        // Initialize http connect pool manager parameters.
+        // Initialize http connection pool manager parameters.
         //
         ConnManagerParamBean connMgrPB = new ConnManagerParamBean(httpParams);
         connMgrPB.setTimeout(DEFAULT_CONN_MANAGER_TIMEOUT);
@@ -146,7 +146,7 @@ public class DefaultHttpHandler {
     }
 
     /**
-     * Set http head and Content charset.
+     * Set http head and content charset.
      * 
      * @param charset
      *            e.g"UTF-8".
@@ -191,7 +191,7 @@ public class DefaultHttpHandler {
     }
 
     /**
-     * Set timeout for obtaining usable connection from connect pool.
+     * Set timeout for obtaining usable connection from connection pool.
      * 
      * @param timeout
      *            in milliseconds.
@@ -201,12 +201,12 @@ public class DefaultHttpHandler {
     }
 
     /**
-     * Set httpclient connect pool carrying ability.
+     * Set HttpClient connection pool carrying ability.
      * 
      * @param maxConnections
-     *            supported max connections.
+     *            max connections.
      * @param connectionsPerRoute
-     *            supported connections per route.
+     *            connections per route.
      */
     public void setConnections(int maxConnections, int connectionsPerRoute) {
         HttpParams params = httpClient.getParams();
@@ -255,15 +255,6 @@ public class DefaultHttpHandler {
     }
 
     /**
-     * Get constructed HttpClient which held by DefaultHttpHandler.
-     * 
-     * @return {@link #httpClient}
-     */
-    public HttpClient getHttpClient() {
-        return httpClient;
-    }
-
-    /**
      * Send http request and handle response.
      * 
      * @param httpClient
@@ -276,7 +267,7 @@ public class DefaultHttpHandler {
      * @throws HttpException
      * @throws IOException
      */
-    public Object request(HttpClient httpClient, HttpUriRequest httpRequest,
+    protected Object request(HttpClient httpClient, HttpUriRequest httpRequest,
             String contentType) throws HttpException, IOException {
         if (!TextUtils.isEmpty(contentType)) {
             httpRequest.setHeader(new BasicHeader("Content-type", contentType));
@@ -343,14 +334,14 @@ public class DefaultHttpHandler {
      */
     protected Object handleResponse(HttpResponse response) throws HttpException,
             IOException {
-        String handledResp = null;
+        String handledResponse = null;
         int statusCode = response.getStatusLine().getStatusCode();
         if (statusCode == 200) {
             HttpEntity entity = null;
             HttpEntity temp = response.getEntity();
             if (temp != null) {
                 entity = new BufferedHttpEntity(temp);
-                handledResp = EntityUtils.toString(entity, DEFAULT_CHARSET_UTF8);
+                handledResponse = EntityUtils.toString(entity, DEFAULT_CHARSET_UTF8);
 
                 entity.consumeContent();
             }
@@ -361,7 +352,7 @@ public class DefaultHttpHandler {
             throw e;
         }
 
-        return handledResp;
+        return handledResponse;
     }
 
     /**
@@ -379,7 +370,7 @@ public class DefaultHttpHandler {
      *            Http query parameters,key-value list.
      * @return httpclient supported key-value list.
      */
-    public List<BasicNameValuePair> toHttpQueryParams(Map<String, String> params) {
+    protected List<BasicNameValuePair> toHttpQueryParams(Map<String, String> params) {
         List<BasicNameValuePair> lparams = new ArrayList<BasicNameValuePair>();
         for (Entry<String, String> entry : params.entrySet()) {
             lparams.add(new BasicNameValuePair(entry.getKey(), entry.getValue()));
@@ -392,9 +383,9 @@ public class DefaultHttpHandler {
      * 
      * @param headers
      *            Http headers,key-value list.
-     * @return a array contain http headers.
+     * @return a array contain http Header.
      */
-    public Header[] toHttpHeaders(Map<String, String> headers) {
+    protected Header[] toHttpHeaders(Map<String, String> headers) {
         List<Header> lHeaders = new ArrayList<Header>();
         for (Entry<String, String> entry : headers.entrySet()) {
             BasicHeader basicHeader = new BasicHeader(entry.getKey(), entry.getValue());
