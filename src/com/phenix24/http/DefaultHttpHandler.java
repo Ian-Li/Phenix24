@@ -64,12 +64,14 @@ public class DefaultHttpHandler {
     static final int DEFAULT_MAX_CONNECTIONS = 8;
     static final int DEFAULT_PER_ROUTE_CONNECTIONS = DEFAULT_MAX_CONNECTIONS;
 
-    static class RetryPolicy implements HttpRequestRetryHandler {
+    static class DefaultRetryPolicy implements RetryPolicy {
+
+        private static final int RETRY_TIMES = 3;
 
         @Override
         public boolean retryRequest(IOException exception, int executionCount,
                 HttpContext context) {
-            return executionCount >= 3 ? false : true;
+            return executionCount >= RETRY_TIMES ? false : true;
         }
     }
 
@@ -96,7 +98,7 @@ public class DefaultHttpHandler {
         HttpParams httpParams = new BasicHttpParams();
 
         //
-        // initialize protocol parameters
+        // Initialize protocol parameters.
         //
         HttpProtocolParamBean httpProtocolPB = new HttpProtocolParamBean(httpParams);
         httpProtocolPB.setVersion(HttpVersion.HTTP_1_1);
@@ -106,7 +108,7 @@ public class DefaultHttpHandler {
         httpProtocolPB.setUseExpectContinue(false);
 
         //
-        // initialize connect parameters
+        // Initialize connect parameters.
         //
         HttpConnectionParamBean httpConnPB = new HttpConnectionParamBean(httpParams);
         httpConnPB.setConnectionTimeout(DEFAULT_CONN_TIMEOUT);
@@ -117,14 +119,14 @@ public class DefaultHttpHandler {
         httpConnPB.setStaleCheckingEnabled(false);
 
         //
-        // register supported protocol
+        // Register supported protocol.
         //
         SchemeRegistry schemeReg = new SchemeRegistry();
         Scheme httpScheme = new Scheme("http", PlainSocketFactory.getSocketFactory(), 80);
         schemeReg.register(httpScheme);
 
         //
-        // initialize http connect pool manager parameters
+        // Initialize http connect pool manager parameters.
         //
         ConnManagerParamBean connMgrPB = new ConnManagerParamBean(httpParams);
         connMgrPB.setTimeout(DEFAULT_CONN_MANAGER_TIMEOUT);
@@ -137,8 +139,8 @@ public class DefaultHttpHandler {
 
         DefaultHttpClient httpClient = new DefaultHttpClient(clientConnMgr, httpParams);
 
-        // set httpclient retry policy when an IOException occured
-        httpClient.setHttpRequestRetryHandler(new RetryPolicy());
+        // Set httpclient retry policy when an IOException occured.
+        httpClient.setHttpRequestRetryHandler(new DefaultRetryPolicy());
 
         return httpClient;
     }
@@ -219,8 +221,8 @@ public class DefaultHttpHandler {
      * @param retryHandler
      *            HttpRequestRetryHandler.
      */
-    public void setHttpRequestRetryHandler(HttpRequestRetryHandler retryHandler) {
-        ((DefaultHttpClient) httpClient).setHttpRequestRetryHandler(retryHandler);
+    public void setHttpRequestRetryHandler(RetryPolicy retryPolicy) {
+        ((DefaultHttpClient) httpClient).setHttpRequestRetryHandler(retryPolicy);
     }
 
     /**
@@ -313,7 +315,7 @@ public class DefaultHttpHandler {
                     if (!isRetry) {
                         e.printStackTrace();
                         httpRequest.abort();
-                        throw new HttpException(e);
+                        throw e;
                     }
                 }
             }
@@ -353,7 +355,8 @@ public class DefaultHttpHandler {
                 entity.consumeContent();
             }
         } else {
-            HttpException e = new HttpException(statusCode);
+            HttpException e = new HttpException(HttpException.STATUS_CODE_ERROR,
+                    "Http status code:" + statusCode);
             e.printStackTrace();
             throw e;
         }
