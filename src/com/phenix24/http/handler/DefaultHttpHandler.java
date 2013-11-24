@@ -166,7 +166,7 @@ public class DefaultHttpHandler {
     }
 
     /**
-     * Set client connect timeout and response timeout.
+     * Set http connect timeout and response timeout.
      * 
      * @param connectTimeout
      *            In milliseconds.
@@ -215,7 +215,7 @@ public class DefaultHttpHandler {
     }
 
     /**
-     * Set client retry policy when an IOException occured.
+     * Set http request retry policy when an IOException occured.
      * 
      * @param retryPolicy
      *            {@link HttpRequestRetryHandler}.
@@ -365,7 +365,7 @@ public class DefaultHttpHandler {
      * 
      * @param headers
      *            Http headers,key-value list.
-     * @return a array contain {@link Header}.
+     * @return A array contain http {@link Header}.
      */
     protected Header[] toHttpHeaders(Map<String, String> headers) {
         List<Header> lHeaders = new ArrayList<Header>();
@@ -382,10 +382,10 @@ public class DefaultHttpHandler {
      * @param url
      *            Start with "http://" or "https://".
      * @param params
-     *            Http query aguments,can be NULL.
+     *            Http query parameters,can be NULL.
      * @param headers
      *            Http headers,can be NULL.
-     * @return Handled response,see {@link #handleResponse(HttpResponse)}.
+     * @return Handled http response,see {@link #handleResponse(HttpResponse)}.
      * 
      * @throws HttpException
      * @throws IOException
@@ -413,10 +413,10 @@ public class DefaultHttpHandler {
      * @param url
      *            Start with "http://" or "https://".
      * @param params
-     *            Http post aguments,can be NULL.
+     *            Http post parameters,can be NULL.
      * @param headers
      *            Http headers,can be NULL.
-     * @return Handled response,see {@link #handleResponse(HttpResponse)}.
+     * @return Handled http response,see {@link #handleResponse(HttpResponse)}.
      * 
      * @throws HttpException
      * @throws IOException

@@ -37,7 +37,7 @@ public class StringHttpHandler extends DefaultHttpHandler {
      * @param url
      *            Start with "http://" or "https://".
      * @param params
-     *            Http query aguments,can be NULL.
+     *            Http query parameters,can be NULL.
      * @return String http response.
      * @throws HttpException
      * @throws IOException
@@ -53,7 +53,7 @@ public class StringHttpHandler extends DefaultHttpHandler {
      * @param url
      *            Start with "http://" or "https://".
      * @param params
-     *            Http query aguments,can be NULL.
+     *            Http query parameters,can be NULL.
      * @param headers
      *            Http headers,can be NULL.
      * @return String http response.
@@ -84,7 +84,7 @@ public class StringHttpHandler extends DefaultHttpHandler {
      * @param url
      *            Start with "http://" or "https://".
      * @param params
-     *            Http post aguments,can be NULL.
+     *            Http post parameters,can be NULL.
      * @return String http response.
      * @throws HttpException
      * @throws IOException
@@ -100,7 +100,7 @@ public class StringHttpHandler extends DefaultHttpHandler {
      * @param url
      *            Start with "http://" or "https://".
      * @param params
-     *            Http post aguments,can be NULL.
+     *            Http post parameters,can be NULL.
      * @param headers
      *            Http headers,can be NULL.
      * @return String http response.
@@ -113,7 +113,7 @@ public class StringHttpHandler extends DefaultHttpHandler {
     }
 
     /**
-     * Return String http response.
+     * Handle {@link HttpResponse} and return String.
      */
     @Override
     protected String handleResponse(HttpResponse response) throws HttpException,
@@ -138,5 +138,4 @@ public class StringHttpHandler extends DefaultHttpHandler {
 
         return handledResponse;
     }
-
 }
