@@ -1,15 +1,18 @@
-package com.phenix24.http;
+package com.phenix24.http.handler;
 
 import java.io.IOException;
 import java.util.Map;
 
 import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+
+import com.phenix24.http.HttpException;
 
 import android.content.Context;
 
-public class PlainHttpHandler extends DefaultHttpHandler {
+public class SimpleHttpHandler extends DefaultHttpHandler {
 
-    public PlainHttpHandler(Context context) {
+    public SimpleHttpHandler(Context context) {
         super(context);
     }
 
@@ -18,11 +21,11 @@ public class PlainHttpHandler extends DefaultHttpHandler {
      * 
      * @param url
      *            Start with "http://" or "https://".
-     * @return String response.
+     * @return {@link HttpResponse}.
      * @throws HttpException
      * @throws IOException
      */
-    public String GET(String url) throws HttpException, IOException {
+    public HttpResponse GET(String url) throws HttpException, IOException {
         return GET(url, null);
     }
 
@@ -33,11 +36,11 @@ public class PlainHttpHandler extends DefaultHttpHandler {
      *            Start with "http://" or "https://".
      * @param params
      *            Http query aguments,can be NULL.
-     * @return String response.
+     * @return {@link HttpResponse}.
      * @throws HttpException
      * @throws IOException
      */
-    public String GET(String url, Map<String, String> params) throws HttpException,
+    public HttpResponse GET(String url, Map<String, String> params) throws HttpException,
             IOException {
         return GET(url, params, null);
     }
@@ -51,13 +54,13 @@ public class PlainHttpHandler extends DefaultHttpHandler {
      *            Http query aguments,can be NULL.
      * @param headers
      *            Http headers,can be NULL.
-     * @return String response.
+     * @return {@link HttpResponse}.
      * @throws HttpException
      * @throws IOException
      */
-    public String GET(String url, Map<String, String> params, Map<String, String> headers)
-            throws HttpException, IOException {
-        return (String) _get(url, params, headers);
+    public HttpResponse GET(String url, Map<String, String> params,
+            Map<String, String> headers) throws HttpException, IOException {
+        return (HttpResponse) _get(url, params, headers);
     }
 
     /**
@@ -65,11 +68,11 @@ public class PlainHttpHandler extends DefaultHttpHandler {
      * 
      * @param url
      *            Start with "http://" or "https://".
-     * @return String response.
+     * @return {@link HttpResponse}.
      * @throws HttpException
      * @throws IOException
      */
-    public String POST(String url) throws HttpException, IOException {
+    public HttpResponse POST(String url) throws HttpException, IOException {
         return POST(url, null);
     }
 
@@ -80,12 +83,12 @@ public class PlainHttpHandler extends DefaultHttpHandler {
      *            Start with "http://" or "https://".
      * @param params
      *            Http post aguments,can be NULL.
-     * @return String response.
+     * @return {@link HttpResponse}.
      * @throws HttpException
      * @throws IOException
      */
-    public String POST(String url, Map<String, String> params) throws HttpException,
-            IOException {
+    public HttpResponse POST(String url, Map<String, String> params)
+            throws HttpException, IOException {
         return POST(url, params, null);
     }
 
@@ -98,19 +101,22 @@ public class PlainHttpHandler extends DefaultHttpHandler {
      *            Http post aguments,can be NULL.
      * @param headers
      *            Http headers,can be NULL.
-     * @return String response.
+     * @return {@link HttpResponse}.
      * @throws HttpException
      * @throws IOException
      */
-    public String POST(String url, Map<String, String> params, Map<String, String> headers)
-            throws HttpException, IOException {
-        return (String) _post(url, params, headers);
+    public HttpResponse POST(String url, Map<String, String> params,
+            Map<String, String> headers) throws HttpException, IOException {
+        return (HttpResponse) _post(url, params, headers);
     }
 
+    /**
+     * Return pure {@link HttpClient} response, see {@link HttpResponse}.
+     */
     @Override
-    protected String handleResponse(HttpResponse response) throws HttpException,
+    protected HttpResponse handleResponse(HttpResponse response) throws HttpException,
             IOException {
-        return (String) super.handleResponse(response);
+        return response;
     }
 
 }

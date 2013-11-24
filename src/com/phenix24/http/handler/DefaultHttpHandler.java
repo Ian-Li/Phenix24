@@ -1,4 +1,4 @@
-package com.phenix24.http;
+package com.phenix24.http.handler;
 
 import java.io.IOException;
 import java.net.SocketException;
@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.http.Header;
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpVersion;
 import org.apache.http.auth.AuthScope;
@@ -18,6 +17,7 @@ import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -30,7 +30,6 @@ import org.apache.http.conn.params.ConnPerRouteBean;
 import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
-import org.apache.http.entity.BufferedHttpEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.message.BasicHeader;
@@ -43,8 +42,8 @@ import org.apache.http.params.HttpProtocolParamBean;
 import org.apache.http.params.HttpProtocolParams;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
-import org.apache.http.util.EntityUtils;
 
+import com.phenix24.http.HttpException;
 import com.phenix24.util.droid.NetworkUtils;
 import com.phenix24.util.droid.NetworkUtils.NetworkState;
 
@@ -64,7 +63,7 @@ public class DefaultHttpHandler {
     static final int DEFAULT_MAX_CONNECTIONS = 8;
     static final int DEFAULT_PER_ROUTE_CONNECTIONS = DEFAULT_MAX_CONNECTIONS;
 
-    static class DefaultRetryPolicy implements RetryPolicy {
+    static class DefaultRetryPolicy implements HttpRequestRetryHandler {
 
         private static final int RETRY_TIMES = 3;
 
@@ -89,8 +88,8 @@ public class DefaultHttpHandler {
     }
 
     /**
-     * Create and Initialize HttpClient.Set HttpClient request retry policy.The
-     * HttpClient is thread safe and present a connection pool.
+     * Create and initialize {@link HttpClient}.Set HttpClient request retry
+     * policy.The HttpClient is thread safe and present a connection pool.
      * 
      * @return HttpClient
      */
@@ -149,7 +148,7 @@ public class DefaultHttpHandler {
      * Set http head and content charset.
      * 
      * @param charset
-     *            e.g"UTF-8".
+     *            E.g"UTF-8".
      */
     public void setCharset(String charset) {
         HttpParams httpParams = httpClient.getParams();
@@ -170,9 +169,9 @@ public class DefaultHttpHandler {
      * Set client connect timeout and response timeout.
      * 
      * @param connectTimeout
-     *            in milliseconds.
+     *            In milliseconds.
      * @param responseTimeout
-     *            in milliseconds.
+     *            In milliseconds.
      */
     public void setTimeout(int connectTimeout, int responseTimeout) {
         HttpParams httpParams = httpClient.getParams();
@@ -184,7 +183,7 @@ public class DefaultHttpHandler {
      * Set http request buffer size.
      * 
      * @param size
-     *            in bytes.
+     *            In bytes.
      */
     public void setBufferSize(int size) {
         HttpConnectionParams.setSocketBufferSize(httpClient.getParams(), size);
@@ -194,19 +193,19 @@ public class DefaultHttpHandler {
      * Set timeout for obtaining usable connection from connection pool.
      * 
      * @param timeout
-     *            in milliseconds.
+     *            In milliseconds.
      */
     public void setConnManagerTimeout(int timeout) {
         ConnManagerParams.setTimeout(httpClient.getParams(), timeout);
     }
 
     /**
-     * Set HttpClient connection pool carrying ability.
+     * Set {@link HttpClient} connection pool carrying ability.
      * 
      * @param maxConnections
-     *            max connections.
+     *            Max connections.
      * @param connectionsPerRoute
-     *            connections per route.
+     *            Connections per route.
      */
     public void setConnections(int maxConnections, int connectionsPerRoute) {
         HttpParams params = httpClient.getParams();
@@ -218,10 +217,10 @@ public class DefaultHttpHandler {
     /**
      * Set client retry policy when an IOException occured.
      * 
-     * @param retryHandler
-     *            HttpRequestRetryHandler.
+     * @param retryPolicy
+     *            {@link HttpRequestRetryHandler}.
      */
-    public void setHttpRequestRetryHandler(RetryPolicy retryPolicy) {
+    public void setHttpRequestRetryHandler(HttpRequestRetryHandler retryPolicy) {
         ((DefaultHttpClient) httpClient).setHttpRequestRetryHandler(retryPolicy);
     }
 
@@ -257,13 +256,13 @@ public class DefaultHttpHandler {
     /**
      * Send http request and handle response.
      * 
-     * @param httpClient
+     * @param {@link HttpClient}
      * @param httpRequest
-     *            Http method,e.g."HttpGet","HttpPost","HttpPut","HttpDelete"
-     *            etc.
+     *            Http method,e.g.{@link HttpGet} ,{@link HttpPost},
+     *            {@link HttpPut},{@link HttpDelete} etc.
      * @param contentType
      *            Http header-"Content-type".
-     * @return handled response
+     * @return Handled http response.
      * @throws HttpException
      * @throws IOException
      */
@@ -327,32 +326,15 @@ public class DefaultHttpHandler {
      * Handle http response.
      * 
      * @param response
-     *            <code>HttpResponse</code>
-     * @return Handled response
+     *            See {@link HttpResponse}.
+     * 
+     * @return Pure {@link HttpClient} response, see {@link HttpResponse}.
      * @throws HttpException
      * @throws IOException
      */
     protected Object handleResponse(HttpResponse response) throws HttpException,
             IOException {
-        String handledResponse = null;
-        int statusCode = response.getStatusLine().getStatusCode();
-        if (statusCode == 200) {
-            HttpEntity entity = null;
-            HttpEntity temp = response.getEntity();
-            if (temp != null) {
-                entity = new BufferedHttpEntity(temp);
-                handledResponse = EntityUtils.toString(entity, DEFAULT_CHARSET_UTF8);
-
-                entity.consumeContent();
-            }
-        } else {
-            HttpException e = new HttpException(HttpException.STATUS_CODE_ERROR,
-                    "Http status code:" + statusCode);
-            e.printStackTrace();
-            throw e;
-        }
-
-        return handledResponse;
+        return response;
     }
 
     /**
@@ -368,7 +350,7 @@ public class DefaultHttpHandler {
      * 
      * @param params
      *            Http query parameters,key-value list.
-     * @return httpclient supported key-value list.
+     * @return {@link HttpClient} supported key-value list.
      */
     protected List<BasicNameValuePair> toHttpQueryParams(Map<String, String> params) {
         List<BasicNameValuePair> lparams = new ArrayList<BasicNameValuePair>();
@@ -383,7 +365,7 @@ public class DefaultHttpHandler {
      * 
      * @param headers
      *            Http headers,key-value list.
-     * @return a array contain http Header.
+     * @return a array contain {@link Header}.
      */
     protected Header[] toHttpHeaders(Map<String, String> headers) {
         List<Header> lHeaders = new ArrayList<Header>();
@@ -403,7 +385,7 @@ public class DefaultHttpHandler {
      *            Http query aguments,can be NULL.
      * @param headers
      *            Http headers,can be NULL.
-     * @return Handled response
+     * @return Handled response,see {@link #handleResponse(HttpResponse)}.
      * 
      * @throws HttpException
      * @throws IOException
@@ -434,7 +416,7 @@ public class DefaultHttpHandler {
      *            Http post aguments,can be NULL.
      * @param headers
      *            Http headers,can be NULL.
-     * @return Handled response
+     * @return Handled response,see {@link #handleResponse(HttpResponse)}.
      * 
      * @throws HttpException
      * @throws IOException
