@@ -2,13 +2,15 @@ package com.phenix24.http;
 
 import java.io.IOException;
 
+import com.phenix24.http.handler.StringHttpHandler;
+
 import android.content.Context;
 import android.test.InstrumentationTestCase;
 import android.util.Log;
 
-public class PlainHttpHandlerTest extends InstrumentationTestCase {
+public class StringHttpHandlerTest extends InstrumentationTestCase {
 
-    private static final String TAG = "PlainHttpHandlerTest";
+    private static final String TAG = "StringHttpHandlerTest";
 
     private Context context;
 
@@ -21,7 +23,7 @@ public class PlainHttpHandlerTest extends InstrumentationTestCase {
     public void test_GET() {
         Log.i(TAG, "----test_GET----");
 
-        PlainHttpHandler httpHandler = new PlainHttpHandler(context);
+        StringHttpHandler httpHandler = new StringHttpHandler(context);
         String response = null;
         try {
             response = httpHandler.GET("http://www.baidu.com");
