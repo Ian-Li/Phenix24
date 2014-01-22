@@ -79,6 +79,16 @@ public class PackageUtils {
     }
 
     /**
+     * Return the name of this application's package.
+     * 
+     * @param context
+     * @return The package name.
+     */
+    public static String getAppPackageName(Context context) {
+        return context.getPackageName();
+    }
+
+    /**
      * Check whether the application package is uninstalled
      * 
      * @param context

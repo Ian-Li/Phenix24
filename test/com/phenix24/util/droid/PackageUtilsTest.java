@@ -47,6 +47,12 @@ public class PackageUtilsTest extends InstrumentationTestCase {
         }
     }
 
+    public void test_getAppPackageName() {
+        Log.i(TAG, "----test_getAppPackageName----");
+        String packageName = PackageUtils.getAppPackageName(context);
+        Log.i(TAG, "packageName:" + packageName);
+    }
+
     public void test_isPackageExist() {
         Log.i(TAG, "----test_isPackageExist----");
         boolean isPackageExist = PackageUtils.isPackageExist(context, "com.t");
