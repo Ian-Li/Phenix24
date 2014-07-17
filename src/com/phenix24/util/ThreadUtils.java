@@ -1,5 +1,6 @@
 package com.phenix24.util;
 
+import android.os.Looper;
 import android.os.Process;
 
 public class ThreadUtils {
@@ -127,6 +128,15 @@ public class ThreadUtils {
      */
     public static Thread makeUrgentDisplayThread(Runnable runnable) {
         return makeThread(runnable, Process.THREAD_PRIORITY_URGENT_DISPLAY);
+    }
+
+    /**
+     * Check a thread is main thread in android.
+     * 
+     * @return true,current is main thread;otherwise false.
+     */
+    public static boolean isMainThread() {
+        return Looper.myLooper() == Looper.getMainLooper();
     }
 
     private static Thread makeThread(final Runnable runnable, final int priority) {
